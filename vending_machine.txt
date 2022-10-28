@@ -1,0 +1,335 @@
+﻿///////////////// Main program
+JnS print_coins
+Halt
+
+
+
+///////////////// functions
+// print coins
+print_coins,    HEX 0
+				/ section message
+				JnS line_n_break
+                load s_cantidad
+				JnS Getch
+                Load s_de
+				JnS Getch
+				Load s_monedas
+				JnS Getch
+                JnS line_n_break
+                / 1 coins
+                Load s100
+                JnS equal
+				Load coins1_m
+				Add offset
+                Output
+				/ 50 coins
+                Load s50
+                JnS equal
+				Load coins50_m
+				Add offset
+                Output
+				/ 25 coins
+                Load s25
+                JnS equal
+				Load coins25_m
+				Add offset
+                Output
+                JumpI print_coins
+
+/ get coins in machine (coin type)
+
+/ print product names and quantities
+
+
+/ get product quantity (product)
+
+/ insert coins
+input_coins,  HEX 0
+		/ instruction message
+        JnS line_n_break
+        Load s_ingresar
+		JnS Getch
+		Load s_monedas
+		JnS Getch
+		Load s_decimal
+		JnS Getch
+		JnS line_n_break
+		/ 1 input
+        Load s_de
+		JnS Getch
+		Load s100
+        JnS Getch
+        Input
+        Store coins1_u
+        Add coins1_m // update machine coins
+        Store coins1_m
+        / 50 input
+        JnS break
+        Load s_de
+		JnS Getch
+		Load s50
+		JnS Getch
+        Input
+		Store coins50_u
+        Add coins50_m // update machine coins
+		Store coins50_m
+		/ 25 input
+        JnS break
+        Load s_de
+		JnS Getch
+		Load s25
+		JnS Getch
+        Input
+		Store coins25_u
+        Add coins25_m // update machine coins
+		Store coins25_m
+        JnS break
+        JumpI input_coins // return
+
+
+
+        
+
+
+
+
+
+/ print string (chptr: pointer to string start)
+/ load chptr value and then jump to getch. It updates chptr and then prints
+Chptr, HEX 0
+one, DEC 1
+
+Getch,	HEX 000 /for JNS
+		Store Chptr 
+Getch2, LoadI	   Chptr	/ Load the character found at address chptr.
+		Skipcond   400		/ If the character is a null, we are done.
+		Jump	   Outp		/ Otherwise, proceed with operation.
+		JumpI Getch
+
+Outp,	Output			/ Output the character.
+		Load	   Chptr	/ Move pointer to next character.
+		Add  	   one		
+		Store	   Chptr
+		Jump	   Getch2
+/ print break
+break,  HEX 0
+		Load lb
+        Output
+		JumpI break
+            
+/ print line
+line, DEC 45
+lenght, DEC 85
+line_break, HEX 0
+			Load lenght
+            Store i
+line_break2,Load i
+            Skipcond 800 / if i > 0, cycle continues
+            JumpI line_break / otherwise (i=0) goes back to jns
+            Load line 
+            Output
+            Load i / i--
+            Subt one
+            Store i
+            Jump line_break2
+/ print line and break
+line_n_break, HEX 0
+			  JnS break
+			  JnS line_break
+              JnS break
+              JumpI line_n_break
+              
+/ print '[coin] = ' (coin: pointer to coin string)
+/ load coin string pointer before jns
+coin, HEX 0
+l_bracket, DEC 91
+r_bracket, DEC 93
+equal, HEX 0
+		Store coin
+        JnS break
+		Load l_bracket
+		Output
+		Load coin
+        JnS Getch
+		Load r_bracket
+		Output
+		Load s_space
+		Output
+		Load s_equal
+		Output
+		Load s_space
+		Output
+        JumpI equal
+
+
+///////////////// variables & pointers
+/ unicode offset
+offset, DEC 48
+/ general counter
+i, HEX 0
+/ machine coins
+coins1_m, DEC 2
+coins50_m, DEC 2
+coins25_m, DEC 2
+/ user coins (unnecesary?)
+coins1_u, DEC 1
+coins50_u, DEC 2
+coins25_u, DEC 3
+/ product names (pointer to string start)
+p1, DEC 0
+p2, DEC 0
+p3, DEC 0
+p4, DEC 0
+p5, DEC 0
+/ product prices
+p1_price, DEC 0
+p2_price, DEC 0
+p3_price, DEC 0
+p4_price, DEC 0
+p5_price, DEC 0
+/ product quantities
+p1_q, DEC 0
+p2_q, DEC 0
+p3_q, DEC 0
+p4_q, DEC 0
+p5_q, DEC 0
+
+
+
+///////////////// strings (first line is pointer to string start, manually added)
+/ Ingresar
+s_ingresar, HEX 04C /HEX AAA
+	DEC 73
+	DEC 110
+	DEC 103
+	DEC 114
+	DEC 101
+	DEC 115
+	DEC 97
+	DEC 114
+	DEC 32
+	DEC 000
+/ Cantidad
+s_cantidad, CLEAR
+	DEC 67
+	DEC 97
+	DEC 110
+	DEC 116
+	DEC 105
+	DEC 100
+	DEC 97
+	DEC 100
+	DEC 32
+	DEC 000
+    
+/ Monedas 
+s_monedas, HEX 057 / HEX BBB
+	DEC 32
+	DEC 77
+	DEC 111
+	DEC 110
+	DEC 101
+	DEC 100
+	DEC 97
+	DEC 115
+	DEC 32
+    DEC 000
+    
+s_de, HEX 061 / HEX AAB
+	DEC 100
+	DEC 101
+    DEC 32
+	DEC 000
+    
+/ $1
+s100, HEX CCC
+	DEC 36
+	DEC 49
+	DEC 32
+	DEC 000
+    
+/ $0.50
+s50, HEX DDD
+	DEC 36
+	DEC 48
+	DEC 46
+	DEC 53
+	DEC 48
+	DEC 32
+	DEC 000
+    
+/ $0.25
+s25, HEX EEE
+	DEC 36
+	DEC 48
+	DEC 46
+	DEC 50
+	DEC 53
+	DEC 32
+	DEC 000
+    
+/ line break
+lb, DEC 10
+
+/ space
+s_space, DEC 32
+
+/ =
+s_equal, DEC 61
+
+/ (en unicode, terminar con dec/hex 0)
+s_unicode, HEX FFF
+	DEC 40
+	DEC 101
+	DEC 110
+	DEC 32
+	DEC 117
+	DEC 110
+	DEC 105
+	DEC 99
+	DEC 111
+	DEC 100
+	DEC 101
+	DEC 44
+	DEC 32
+	DEC 116
+	DEC 101
+	DEC 114
+	DEC 109
+	DEC 105
+	DEC 110
+	DEC 97
+	DEC 114
+	DEC 32
+	DEC 99
+	DEC 111
+	DEC 110
+	DEC 32
+	DEC 100
+	DEC 101
+	DEC 99
+	DEC 47
+	DEC 104
+	DEC 101
+	DEC 120
+	DEC 32
+	DEC 48
+	DEC 41
+	DEC 32
+	DEC 000
+/ (en decimal)
+s_decimal, HEX ABA
+	DEC 40
+	DEC 101
+	DEC 110
+	DEC 32
+	DEC 100
+	DEC 101
+	DEC 99
+	DEC 105
+	DEC 109
+	DEC 97
+	DEC 108
+	DEC 41
+	DEC 32
+	DEC 000
