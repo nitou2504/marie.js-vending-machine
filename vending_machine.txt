@@ -1,5 +1,8 @@
 ﻿///////////////// Main program
 JnS print_coins
+JnS input_coins
+JnS print_coins
+JnS input_product
 Halt
 
 
@@ -36,12 +39,56 @@ print_coins,    HEX 0
                 Output
                 JumpI print_coins
 
-/ get coins in machine (coin type)
+/ print product names, prices and quantities
+products, DEC 5
+current_product, HEX 0
+current_quantity, HEX 0
+current_price, HEX 0
+s_numeral, DEC 35
+s_money, DEC 36
 
-/ print product names and quantities
-
-
-/ get product quantity (product)
+print_products, HEX 0
+				Load products
+				Store i
+print_products_2, Load p_names_start // update current product
+				  Add i
+                  Add one
+                  Store current_product
+				  Load p_prices_start // updated current price
+				  Add i
+                  Add one
+                  Store current_product
+                  Load p_quantities_start // update current quantity
+				  Add i
+                  Add one
+                  Store current_product
+                  / output line #i product_name product_price (quantity)
+                  Load s_numeral 				  
+                  Output
+                  Load i
+                  Add offset
+                  Output
+                  Load s_space
+                  Output
+                  Load current_product
+                  JnS Getch    
+                  Load s_money
+                  Output
+                  // TODO implement fuction to print DEC as YYYY.XX in unicode and print current_price
+                  Load s_space
+                  Output
+                  LoadI current_quantity
+                  JnS disponibility
+                  JnS break
+                  JnS break
+                  
+                  / i--
+                  Load i
+                  Subt one
+                  Store i
+                  Skipcond 800
+                  JumpI print_products
+                  Jump print_products_2
 
 / insert coins
 input_coins,  HEX 0
@@ -86,16 +133,25 @@ input_coins,  HEX 0
         JnS break
         JumpI input_coins // return
 
-
-
-        
-
-
-
-
+/ insert desired product
+input_product, HEX 0
+				/ instruction message
+                JnS line_n_break
+                Load s_ingresar
+                JnS Getch
+                Load s_producto
+                JnS Getch
+                Load s_decimal
+                JnS Getch
+                JnS line_n_break
+                JnS print_products
+                / input
+                Input
+                Store wanted_product
+                JumpI input_product
 
 / print string (chptr: pointer to string start)
-/ load chptr value and then jump to getch. It updates chptr and then prints
+// load chptr value and then jump to getch. It updates chptr and then prints
 Chptr, HEX 0
 one, DEC 1
 
@@ -139,8 +195,8 @@ line_n_break, HEX 0
               JnS break
               JumpI line_n_break
               
-/ print '[coin] = ' (coin: pointer to coin string)
-/ load coin string pointer before jns
+/ print '[coin] = ' (coin: pointer to coin string or any other)
+// load coin string pointer before jns
 coin, HEX 0
 l_bracket, DEC 91
 r_bracket, DEC 93
@@ -160,6 +216,26 @@ equal, HEX 0
 		Load s_space
 		Output
         JumpI equal
+/ print (Disponibles = [product quantity (p_q)]
+// Load product quantity tag before calling jns
+quantity, DEC 0
+disponibility, HEX 0
+				Store quantity
+                Load l_bracket
+                Output
+                Load s_disponible
+                JnS Getch
+				Load s_equal
+				Output
+				Load s_space
+				Output
+                Load quantity
+                Add offset
+                Output
+                Load r_bracket
+                Output
+                JumpI disponibility
+
 
 
 ///////////////// variables & pointers
@@ -171,30 +247,39 @@ i, HEX 0
 coins1_m, DEC 2
 coins50_m, DEC 2
 coins25_m, DEC 2
-/ user coins (unnecesary?)
+/ machine money 
+// TODO update with initial machine coins (
+money_m, DEC 0
+/ user money
+// TODO update with initial user coins
+money_u, DEC 0
+/ user coins 
 coins1_u, DEC 1
 coins50_u, DEC 2
 coins25_u, DEC 3
 / product names (pointer to string start)
+p_names_start, HEX EEF
 p1, DEC 0
 p2, DEC 0
 p3, DEC 0
 p4, DEC 0
 p5, DEC 0
 / product prices
+p_prices_start, HEX EEF
 p1_price, DEC 0
 p2_price, DEC 0
 p3_price, DEC 0
 p4_price, DEC 0
 p5_price, DEC 0
 / product quantities
+p_quantities_start, HEX EEF
 p1_q, DEC 0
 p2_q, DEC 0
 p3_q, DEC 0
 p4_q, DEC 0
 p5_q, DEC 0
-
-
+/ currently wanted product
+wanted_product, DEC 0
 
 ///////////////// strings (first line is pointer to string start, manually added)
 / Ingresar
@@ -234,7 +319,36 @@ s_monedas, HEX 057 / HEX BBB
 	DEC 115
 	DEC 32
     DEC 000
+
+/ Producto
+s_producto, HEX ABB
+	DEC 80
+	DEC 114
+	DEC 111
+	DEC 100
+	DEC 117
+	DEC 99
+	DEC 116
+	DEC 111
+	DEC 32
+	DEC 000
     
+/ Disponible
+s_disponible, CLEAR
+	DEC 68
+	DEC 105
+	DEC 115
+	DEC 112
+	DEC 111
+	DEC 110
+	DEC 105
+	DEC 98
+	DEC 108
+	DEC 101
+	DEC 32
+	DEC 000
+    
+/ de    
 s_de, HEX 061 / HEX AAB
 	DEC 100
 	DEC 101
