@@ -40,9 +40,8 @@ print_coins,    HEX 0
                 JumpI print_coins
 
 / print product names, prices and quantities
-products, DEC 5
-current_product, HEX 0
-current_quantity, HEX 0
+products, DEC 5 / how many products leave at 5
+current_quantity, HEX 0 
 current_price, HEX 0
 s_numeral, DEC 35
 s_money, DEC 36
@@ -50,28 +49,20 @@ s_money, DEC 36
 print_products, HEX 0
 				Load products
 				Store i
-print_products_2, Load p_names_start // update current product
+print_products_2, Load p_prices_start // updated current price
 				  Add i
-                  Add one
-                  Store current_product
-				  Load p_prices_start // updated current price
-				  Add i
-                  Add one
-                  Store current_product
+                  Store current_price
                   Load p_quantities_start // update current quantity
 				  Add i
-                  Add one
-                  Store current_product
+                  Store current_quantity
                   / output line #i product_name product_price (quantity)
                   Load s_numeral 				  
                   Output
                   Load i
-                  Add offset
+                  Add offset 
                   Output
                   Load s_space
-                  Output
-                  Load current_product
-                  JnS Getch    
+                  Output   
                   Load s_money
                   Output
                   // TODO implement fuction to print DEC as YYYY.XX in unicode and print current_price
@@ -230,7 +221,7 @@ disponibility, HEX 0
 				Load s_space
 				Output
                 Load quantity
-                Add offset
+                Add offset /assuming is less than 10
                 Output
                 Load r_bracket
                 Output
@@ -257,33 +248,26 @@ money_u, DEC 0
 coins1_u, DEC 1
 coins50_u, DEC 2
 coins25_u, DEC 3
-/ product names (pointer to string start)
-p_names_start, HEX EEF
-p1, DEC 0
-p2, DEC 0
-p3, DEC 0
-p4, DEC 0
-p5, DEC 0
 / product prices
-p_prices_start, HEX EEF
+p_prices_start, HEX EEF /puntero aqui + 0
 p1_price, DEC 0
 p2_price, DEC 0
 p3_price, DEC 0
 p4_price, DEC 0
 p5_price, DEC 0
 / product quantities
-p_quantities_start, HEX EEF
-p1_q, DEC 0
-p2_q, DEC 0
-p3_q, DEC 0
+p_quantities_start, HEX 0CB /puntero + 0
+p1_q, DEC 2
+p2_q, DEC 3
+p3_q, DEC 4
 p4_q, DEC 0
 p5_q, DEC 0
 / currently wanted product
 wanted_product, DEC 0
 
-///////////////// strings (first line is pointer to string start, manually added)
+///////////////// strings (first line is pointer to string start (+1), manually added)
 / Ingresar
-s_ingresar, HEX 04C /HEX AAA
+s_ingresar, HEX 0E1 /HEX AAA
 	DEC 73
 	DEC 110
 	DEC 103
@@ -295,7 +279,7 @@ s_ingresar, HEX 04C /HEX AAA
 	DEC 32
 	DEC 000
 / Cantidad
-s_cantidad, CLEAR
+s_cantidad, HEX 0EC
 	DEC 67
 	DEC 97
 	DEC 110
@@ -308,7 +292,7 @@ s_cantidad, CLEAR
 	DEC 000
     
 / Monedas 
-s_monedas, HEX 057 / HEX BBB
+s_monedas, HEX 0F7 / HEX BBB
 	DEC 32
 	DEC 77
 	DEC 111
@@ -321,7 +305,7 @@ s_monedas, HEX 057 / HEX BBB
     DEC 000
 
 / Producto
-s_producto, HEX ABB
+s_producto, HEX 102
 	DEC 80
 	DEC 114
 	DEC 111
@@ -334,8 +318,8 @@ s_producto, HEX ABB
 	DEC 000
     
 / Disponible
-s_disponible, CLEAR
-	DEC 68
+s_disponible,HEX 10D
+ 	DEC 68 
 	DEC 105
 	DEC 115
 	DEC 112
@@ -349,21 +333,21 @@ s_disponible, CLEAR
 	DEC 000
     
 / de    
-s_de, HEX 061 / HEX AAB
+s_de, HEX 11A / HEX AAB
 	DEC 100
 	DEC 101
     DEC 32
 	DEC 000
     
 / $1
-s100, HEX CCC
+s100, HEX 11F
 	DEC 36
 	DEC 49
 	DEC 32
 	DEC 000
     
 / $0.50
-s50, HEX DDD
+s50, HEX 124
 	DEC 36
 	DEC 48
 	DEC 46
@@ -373,7 +357,7 @@ s50, HEX DDD
 	DEC 000
     
 / $0.25
-s25, HEX EEE
+s25, HEX 12C
 	DEC 36
 	DEC 48
 	DEC 46
@@ -392,7 +376,7 @@ s_space, DEC 32
 s_equal, DEC 61
 
 / (en unicode, terminar con dec/hex 0)
-s_unicode, HEX FFF
+s_unicode, HEX 137
 	DEC 40
 	DEC 101
 	DEC 110
@@ -432,7 +416,7 @@ s_unicode, HEX FFF
 	DEC 32
 	DEC 000
 / (en decimal)
-s_decimal, HEX ABA
+s_decimal, HEX 15E
 	DEC 40
 	DEC 101
 	DEC 110
