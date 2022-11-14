@@ -1,4 +1,4 @@
-﻿///////////////// Main program
+///////////////// Main program
 JnS print_coins
 JnS input_coins
 JnS print_coins
@@ -249,7 +249,7 @@ coins1_u, DEC 1
 coins50_u, DEC 2
 coins25_u, DEC 3
 / product prices
-p_prices_start, HEX EEF /puntero aqui + 0
+p_prices_start, HEX EC5 /puntero aqui + 0
 p1_price, DEC 0
 p2_price, DEC 0
 p3_price, DEC 0
@@ -267,7 +267,7 @@ wanted_product, DEC 0
 
 ///////////////// strings (first line is pointer to string start (+1), manually added)
 / Ingresar
-s_ingresar, HEX 0E1 /HEX AAA
+s_ingresar, HEX 0D3 /HEX AAA
 	DEC 73
 	DEC 110
 	DEC 103
@@ -279,7 +279,7 @@ s_ingresar, HEX 0E1 /HEX AAA
 	DEC 32
 	DEC 000
 / Cantidad
-s_cantidad, HEX 0EC
+s_cantidad, HEX 0DE
 	DEC 67
 	DEC 97
 	DEC 110
@@ -292,7 +292,7 @@ s_cantidad, HEX 0EC
 	DEC 000
     
 / Monedas 
-s_monedas, HEX 0F7 / HEX BBB
+s_monedas, HEX 0E9 / HEX BBB
 	DEC 32
 	DEC 77
 	DEC 111
@@ -305,7 +305,7 @@ s_monedas, HEX 0F7 / HEX BBB
     DEC 000
 
 / Producto
-s_producto, HEX 102
+s_producto, HEX 0F4
 	DEC 80
 	DEC 114
 	DEC 111
@@ -318,7 +318,7 @@ s_producto, HEX 102
 	DEC 000
     
 / Disponible
-s_disponible,HEX 10D
+s_disponible,HEX 0FF
  	DEC 68 
 	DEC 105
 	DEC 115
@@ -333,21 +333,21 @@ s_disponible,HEX 10D
 	DEC 000
     
 / de    
-s_de, HEX 11A / HEX AAB
+s_de, HEX 10C / HEX AAB
 	DEC 100
 	DEC 101
     DEC 32
 	DEC 000
     
 / $1
-s100, HEX 11F
+s100, HEX 111
 	DEC 36
 	DEC 49
 	DEC 32
 	DEC 000
     
 / $0.50
-s50, HEX 124
+s50, HEX 116
 	DEC 36
 	DEC 48
 	DEC 46
@@ -357,7 +357,7 @@ s50, HEX 124
 	DEC 000
     
 / $0.25
-s25, HEX 12C
+s25, HEX 11E
 	DEC 36
 	DEC 48
 	DEC 46
@@ -376,7 +376,7 @@ s_space, DEC 32
 s_equal, DEC 61
 
 / (en unicode, terminar con dec/hex 0)
-s_unicode, HEX 137
+s_unicode, HEX 129
 	DEC 40
 	DEC 101
 	DEC 110
@@ -416,7 +416,7 @@ s_unicode, HEX 137
 	DEC 32
 	DEC 000
 / (en decimal)
-s_decimal, HEX 15E
+s_decimal, HEX 150
 	DEC 40
 	DEC 101
 	DEC 110
