@@ -1,11 +1,209 @@
-///////////////// Main program
-JnS print_coins
-JnS input_coins
-JnS print_coins
-JnS input_product
-Halt
+Jump Main
+
+//Load coins1_m
+///////////////// variables & pointers
+/ unicode offset
+offset, DEC 48
+/ general counter
+i, HEX 0
+/ machine coins
+coins1_m, DEC 2
+coins50_m, DEC 2
+coins25_m, DEC 2
+/ machine money 
+// TODO update with initial machine coins (
+money_m, DEC 0
+/ user money
+// TODO update with initial user coins
+money_u, DEC 0
+/ user coins 
+coins1_u, DEC 1
+coins50_u, DEC 2
+coins25_u, DEC 3
+/ product prices
+p_prices_start, HEX B /puntero aqui + 0
+p1_price, DEC 0
+p2_price, DEC 0
+p3_price, DEC 0
+p4_price, DEC 0
+p5_price, DEC 0
+/ product quantities
+p_quantities_start, HEX 11 /puntero + 0
+p1_q, DEC 2
+p2_q, DEC 3
+p3_q, DEC 4
+p4_q, DEC 0
+p5_q, DEC 0
+/ currently wanted product
+wanted_product, DEC 0
 
 
+///////////////// strings (first line is pointer to string start (+1), manually added)
+/ Ingresar
+s_ingresar, HEX 19 /HEX AAA
+	DEC 73
+	DEC 110
+	DEC 103
+	DEC 114
+	DEC 101
+	DEC 115
+	DEC 97
+	DEC 114
+	DEC 32
+	DEC 000
+/ Cantidad
+s_cantidad, HEX 24
+	DEC 67
+	DEC 97
+	DEC 110
+	DEC 116
+	DEC 105
+	DEC 100
+	DEC 97
+	DEC 100
+	DEC 32
+	DEC 000
+    
+/ Monedas 
+s_monedas, HEX 2F / HEX BBB
+	DEC 32
+	DEC 77
+	DEC 111
+	DEC 110
+	DEC 101
+	DEC 100
+	DEC 97
+	DEC 115
+	DEC 32
+    DEC 000
+
+/ Producto
+s_producto, HEX 3A
+	DEC 80
+	DEC 114
+	DEC 111
+	DEC 100
+	DEC 117
+	DEC 99
+	DEC 116
+	DEC 111
+	DEC 32
+	DEC 000
+    
+/ Disponible
+s_disponible,HEX 45
+ 	DEC 68 
+	DEC 105
+	DEC 115
+	DEC 112
+	DEC 111
+	DEC 110
+	DEC 105
+	DEC 98
+	DEC 108
+	DEC 101
+	DEC 32
+	DEC 000
+    
+/ de    
+s_de, HEX 52 / HEX AAB
+	DEC 100
+	DEC 101
+    DEC 32
+	DEC 000
+    
+/ $1
+s100, HEX 57
+	DEC 36
+	DEC 49
+	DEC 32
+	DEC 000
+    
+/ $0.50
+s50, HEX 5C
+	DEC 36
+	DEC 48
+	DEC 46
+	DEC 53
+	DEC 48
+	DEC 32
+	DEC 000
+    
+/ $0.25
+s25, HEX 64
+	DEC 36
+	DEC 48
+	DEC 46
+	DEC 50
+	DEC 53
+	DEC 32
+	DEC 000
+    
+/ line break
+lb, DEC 10
+
+/ space
+s_space, DEC 32
+
+/ =
+s_equal, DEC 61
+
+/ (en unicode, terminar con dec/hex 0)
+s_unicode, HEX 6F
+	DEC 40
+	DEC 101
+	DEC 110
+	DEC 32
+	DEC 117
+	DEC 110
+	DEC 105
+	DEC 99
+	DEC 111
+	DEC 100
+	DEC 101
+	DEC 44
+	DEC 32
+	DEC 116
+	DEC 101
+	DEC 114
+	DEC 109
+	DEC 105
+	DEC 110
+	DEC 97
+	DEC 114
+	DEC 32
+	DEC 99
+	DEC 111
+	DEC 110
+	DEC 32
+	DEC 100
+	DEC 101
+	DEC 99
+	DEC 47
+	DEC 104
+	DEC 101
+	DEC 120
+	DEC 32
+	DEC 48
+	DEC 41
+	DEC 32
+	DEC 000
+/ (en decimal)
+s_decimal, HEX 96
+	DEC 40
+	DEC 101
+	DEC 110
+	DEC 32
+	DEC 100
+	DEC 101
+	DEC 99
+	DEC 105
+	DEC 109
+	DEC 97
+	DEC 108
+	DEC 41
+	DEC 32
+	DEC 000
 
 ///////////////// functions
 // print coins
@@ -228,206 +426,14 @@ disponibility, HEX 0
                 JumpI disponibility
 
 
+///////////////// Main program
+Main, JnS print_coins
+JnS input_coins
+JnS print_coins
+JnS input_product
+Halt
 
-///////////////// variables & pointers
-/ unicode offset
-offset, DEC 48
-/ general counter
-i, HEX 0
-/ machine coins
-coins1_m, DEC 2
-coins50_m, DEC 2
-coins25_m, DEC 2
-/ machine money 
-// TODO update with initial machine coins (
-money_m, DEC 0
-/ user money
-// TODO update with initial user coins
-money_u, DEC 0
-/ user coins 
-coins1_u, DEC 1
-coins50_u, DEC 2
-coins25_u, DEC 3
-/ product prices
-p_prices_start, HEX EC5 /puntero aqui + 0
-p1_price, DEC 0
-p2_price, DEC 0
-p3_price, DEC 0
-p4_price, DEC 0
-p5_price, DEC 0
-/ product quantities
-p_quantities_start, HEX 0CB /puntero + 0
-p1_q, DEC 2
-p2_q, DEC 3
-p3_q, DEC 4
-p4_q, DEC 0
-p5_q, DEC 0
-/ currently wanted product
-wanted_product, DEC 0
 
-///////////////// strings (first line is pointer to string start (+1), manually added)
-/ Ingresar
-s_ingresar, HEX 0D3 /HEX AAA
-	DEC 73
-	DEC 110
-	DEC 103
-	DEC 114
-	DEC 101
-	DEC 115
-	DEC 97
-	DEC 114
-	DEC 32
-	DEC 000
-/ Cantidad
-s_cantidad, HEX 0DE
-	DEC 67
-	DEC 97
-	DEC 110
-	DEC 116
-	DEC 105
-	DEC 100
-	DEC 97
-	DEC 100
-	DEC 32
-	DEC 000
-    
-/ Monedas 
-s_monedas, HEX 0E9 / HEX BBB
-	DEC 32
-	DEC 77
-	DEC 111
-	DEC 110
-	DEC 101
-	DEC 100
-	DEC 97
-	DEC 115
-	DEC 32
-    DEC 000
 
-/ Producto
-s_producto, HEX 0F4
-	DEC 80
-	DEC 114
-	DEC 111
-	DEC 100
-	DEC 117
-	DEC 99
-	DEC 116
-	DEC 111
-	DEC 32
-	DEC 000
-    
-/ Disponible
-s_disponible,HEX 0FF
- 	DEC 68 
-	DEC 105
-	DEC 115
-	DEC 112
-	DEC 111
-	DEC 110
-	DEC 105
-	DEC 98
-	DEC 108
-	DEC 101
-	DEC 32
-	DEC 000
-    
-/ de    
-s_de, HEX 10C / HEX AAB
-	DEC 100
-	DEC 101
-    DEC 32
-	DEC 000
-    
-/ $1
-s100, HEX 111
-	DEC 36
-	DEC 49
-	DEC 32
-	DEC 000
-    
-/ $0.50
-s50, HEX 116
-	DEC 36
-	DEC 48
-	DEC 46
-	DEC 53
-	DEC 48
-	DEC 32
-	DEC 000
-    
-/ $0.25
-s25, HEX 11E
-	DEC 36
-	DEC 48
-	DEC 46
-	DEC 50
-	DEC 53
-	DEC 32
-	DEC 000
-    
-/ line break
-lb, DEC 10
 
-/ space
-s_space, DEC 32
 
-/ =
-s_equal, DEC 61
-
-/ (en unicode, terminar con dec/hex 0)
-s_unicode, HEX 129
-	DEC 40
-	DEC 101
-	DEC 110
-	DEC 32
-	DEC 117
-	DEC 110
-	DEC 105
-	DEC 99
-	DEC 111
-	DEC 100
-	DEC 101
-	DEC 44
-	DEC 32
-	DEC 116
-	DEC 101
-	DEC 114
-	DEC 109
-	DEC 105
-	DEC 110
-	DEC 97
-	DEC 114
-	DEC 32
-	DEC 99
-	DEC 111
-	DEC 110
-	DEC 32
-	DEC 100
-	DEC 101
-	DEC 99
-	DEC 47
-	DEC 104
-	DEC 101
-	DEC 120
-	DEC 32
-	DEC 48
-	DEC 41
-	DEC 32
-	DEC 000
-/ (en decimal)
-s_decimal, HEX 150
-	DEC 40
-	DEC 101
-	DEC 110
-	DEC 32
-	DEC 100
-	DEC 101
-	DEC 99
-	DEC 105
-	DEC 109
-	DEC 97
-	DEC 108
-	DEC 41
-	DEC 32
-	DEC 000
