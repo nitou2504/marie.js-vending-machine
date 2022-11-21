@@ -1,4 +1,4 @@
-Jump Main
+﻿Jump Main
 
 //Load coins1_m
 ///////////////// variables & pointers
@@ -22,11 +22,11 @@ coins50_u, DEC 2
 coins25_u, DEC 3
 / product prices
 p_prices_start, HEX B /puntero aqui + 0
-p1_price, DEC 0
-p2_price, DEC 0
-p3_price, DEC 0
-p4_price, DEC 0
-p5_price, DEC 0
+p1_price, DEC 250
+p2_price, DEC 75
+p3_price, DEC 25
+p4_price, DEC 100
+p5_price, DEC 1000
 / product quantities
 p_quantities_start, HEX 11 /puntero + 0
 p1_q, DEC 2
@@ -221,20 +221,17 @@ print_coins,    HEX 0
                 Load s100
                 JnS equal
 				Load coins1_m
-				Add offset
-                Output
+                JnS print_digits
 				/ 50 coins
                 Load s50
                 JnS equal
 				Load coins50_m
-				Add offset
-                Output
+				JnS print_digits
 				/ 25 coins
                 Load s25
                 JnS equal
 				Load coins25_m
-				Add offset
-                Output
+				JnS print_digits
                 JumpI print_coins
 
 / print product names, prices and quantities
@@ -260,10 +257,11 @@ print_products_2, Load p_prices_start // updated current price
                   Add offset 
                   Output
                   Load s_space
-                  Output   
-                  Load s_money
                   Output
-                  // TODO implement fuction to print DEC as YYYY.XX in unicode and print current_price
+                  Load one
+                  Store money_format
+                  LoadI current_price
+                  JnS print_digits
                   Load s_space
                   Output
                   LoadI current_quantity
@@ -290,33 +288,36 @@ input_coins,  HEX 0
 		Load s_decimal
 		JnS Getch
 		JnS line_n_break
-		/ 1 input
-        Load s_de
-		JnS Getch
+		// 1 input
 		Load s100
-        JnS Getch
-        Input
+        JnS equal
+        Input 
+        // TODO verify max dollars in input <= 99 as the maximum money of the user is $99.99 ($99.75)
+        // and the maximum money in the machine is ~ 65525 (use 65000) = $650.00
+        // machine money = user coins + machine coins
         Store coins1_u
+        JnS print_digits
+        Load coins1_u
         Add coins1_m // update machine coins
         Store coins1_m
-        / 50 input
-        JnS break
-        Load s_de
-		JnS Getch
+        // 50 input
 		Load s50
-		JnS Getch
-        Input
+		JnS equal
+        Input 
+        // TODO verify and restrict max
 		Store coins50_u
+        JnS print_digits
+        Load coins50_u
         Add coins50_m // update machine coins
 		Store coins50_m
-		/ 25 input
-        JnS break
-        Load s_de
-		JnS Getch
+		// 25 input
 		Load s25
-		JnS Getch
-        Input
+		JnS equal
+        Input 
+        // TODO verify and restric max
 		Store coins25_u
+        JnS print_digits
+        Load coins25_u
         Add coins25_m // update machine coins
 		Store coins25_m
         JnS break
@@ -324,7 +325,7 @@ input_coins,  HEX 0
 
 / insert desired product
 input_product, HEX 0
-				/ instruction message
+				// instruction message
                 JnS line_n_break
                 Load s_ingresar
                 JnS Getch
@@ -334,7 +335,7 @@ input_product, HEX 0
                 JnS Getch
                 JnS line_n_break
                 JnS print_products
-                / input
+                // input
                 Input
                 Store wanted_product
                 JumpI input_product
@@ -364,7 +365,7 @@ break,  HEX 0
             
 / print line
 line, DEC 45
-lenght, DEC 85
+lenght, DEC 60
 line_break, HEX 0
 			Load lenght
             Store i
@@ -419,20 +420,262 @@ disponibility, HEX 0
 				Load s_space
 				Output
                 Load quantity
-                Add offset /assuming is less than 10
-                Output
+                JnS print_digits
                 Load r_bracket
                 Output
                 JumpI disponibility
 
 
+/ mod function (A,B) returns mod_val
+// load and store a and b values before calling mod
+// store after calling
+A, DEC			0
+B, DEC			0
+mod_val, DEC 0
+mod,		HEX 0
+mod2,		LOAD		A			
+			SUBT		B			/ 
+			SKIPCOND	000			/ AC < 0 Condicion para sacar el mod
+			JUMP		loop			/ jump al MODulo
+			JUMP		Final		/ jump al FINAL
+
+loop,		LOAD		A			/ Cargamos A
+			SUBT		B			/ Restamos B del ACumulador
+			STORE		A
+			JUMP		mod2		
+
+Final,		LOAD 		A			/ Cargamos A
+			Store mod_val
+			JumpI mod
+
+/Mult(X,Y) returns X*Y
+// load X and Y which are positive integers
+X,    DEC    0    /input
+Y,    DEC    0    /input
+XY,    DEC    0    /output
+J,    DEC    0    /local variable
+/ one, DEC 1
+
+Mult,    HEX    0    / Store return address here.
+   Load     Y
+   Store     J    / J = Y
+   Clear
+   Store    XY    / XY = 0
+Loop,    Load    X    
+   Add    XY    / XY = X
+   Store    XY    / XY = XY + X
+   Load     J
+   Subt    one
+   Store    J
+   Skipcond 400    / if J=0
+   Jump    Loop
+   JumpI    Mult    / Return to calling code.
+
+/ digits(value = xxxx) returns units, tens, hundreds, thousands
+// load and store value before call
+// update/copy/clear ouput values after call
+value, DEC 0
+last_a, DEC 0
+temp, DEC 0
+ten, DEC 10
+hundred, DEC 100
+thousand, DEC 1000
+ten_thousand, DEC 10000
+units, DEC 0
+tens, DEC 0
+hundreds, DEC 0
+thousands, DEC 0
+
+digits, HEX 0
+		Clear
+        // setting zeros
+        Store units
+        Store tens
+        Store hundreds
+        Store thousands
+		// units
+        Load value
+        Skipcond 800
+        JumpI digits 
+        Store A
+        Store last_a
+        Load ten
+        Store Y // to use in multiplication
+        Store B
+        JnS mod
+        Load mod_val
+        Store temp
+        Store units
+		// tens
+        Load last_a
+		Subt temp
+        Store last_a
+        Skipcond 800
+        JumpI digits
+        Load last_a
+		Store A
+        Load B
+        Store X
+        JnS Mult / b = b*10
+        Load XY
+        Store B
+        JnS mod / mod(a,b)
+        Load mod_val
+        Store temp
+        Store N
+        Load ten
+        Store D
+        JnS division / temp // 10
+        Load Answer
+        Store tens
+        // hundreds
+        Load last_a
+		Subt temp
+        Store last_a
+        Skipcond 800
+        JumpI digits
+        Load last_a
+		Store A
+        Load B
+        Store X
+        JnS Mult / b = b*10
+        Load XY
+        Store B
+        JnS mod / mod(a,b)
+        Load mod_val
+        Store temp
+        Store N
+        Load hundred
+        Store D
+        JnS division / temp // 100
+        Load Answer
+        Store hundreds
+        // thousands
+        Load last_a
+		Subt temp
+        Store last_a
+        Skipcond 800
+        JumpI digits
+        Load last_a
+		Store A
+        Load B
+        Store X
+        JnS Mult / b = b*10
+        Load XY
+        Store B
+        JnS mod / mod(a,b)
+        Load mod_val
+        Store temp
+        Store N
+        Load thousand
+        Store D
+        JnS division / temp // 1000
+        Load Answer
+        Store thousands
+        JumpI digits
+
+/ division (N,D) return Answer\
+// source: http://www.csci.viu.ca/~wesselsd/courses/csci162/code/marie/#e4
+// load N, D before call
+N,      dec         25000       / user value for N
+D,      dec         10000      / user value for D
+K,      dec         0       / amount of N still left
+/ J,      dec         0       / current multiple of D
+Pow,    dec         0       / computing powers of 2
+Answer, dec         0       / final result
+Incr,   dec         1       / for ++ --
+        
+division,  HEX 0
+		Load N
+        Store K
+        Clear
+        Store J
+        Store Pow
+        Store Answer
+Outer,	load        K       / not done if K is positive
+        skipcond    800
+        jump        Done    / otherwise we're finished
+        load        Incr    / Pow = 1
+        store       Pow
+        load        D       / J = D
+        store       J
+
+Inner,  load        J       / not done if 2J < K
+        add         J
+        subt        K
+        skipcond    000
+        jump        AftIn   / leave inner loop
+        load        J       / J = 2*J
+        add         J
+        store       J
+        load        Pow     / Pow = 2*Pow
+        add         Pow
+        store       Pow
+        
+        jump        Inner   / back to top of inner loop
+        
+AftIn,  load        K       / K = K - J
+        subt        J
+        store       K
+        load        Answer  / Answer = Answer + Pow
+        add         Pow
+        store       Answer
+                
+        jump        Outer   / back to top of outer loop
+
+Done,   load        K       / if K < 0 answer--
+        skipcond    000
+        jump        Disp
+        load        Answer
+        subt        Incr
+        Store Answer
+Disp,   Load Answer
+        JumpI division
+
+/ print_digits(value, money_format:bool = 0) prints xxxx / $xx.xx
+// change money_format before loading value as it is set to false in each call
+// only Load value before cal, function stores the value
+money_format, DEC 0
+s_dot, DEC 46
+print_digits, HEX 0
+			  Store value
+              JnS digits
+              Load money_format
+              Skipcond 400
+              Jump dollar_sign
+dollars,      Load thousands
+			  Skipcond 800
+              Jump skip0 // to skip first 0 for aesthetics
+              Add offset
+              Output
+skip0,        Load hundreds
+              Add offset
+              Output
+              Load money_format
+              Skipcond 400
+              Jump cents_separator
+cents,        Load tens
+              Add offset
+              Output
+              Load units
+              Add offset
+              Output
+              Clear 
+              Store money_format // reset money_format to false
+              JumpI print_digits
+dollar_sign,  Load s_money
+			  Output
+              Jump dollars
+cents_separator, Load s_dot
+				 Output
+                 Jump cents
+                 
 ///////////////// Main program
 Main, JnS print_coins
 JnS input_coins
 JnS print_coins
 JnS input_product
 Halt
-
 
 
 
