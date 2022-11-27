@@ -1,4 +1,4 @@
-﻿Jump Main
+Jump Main
 
 //Load coins1_m
 ///////////////// variables & pointers
@@ -204,8 +204,268 @@ s_decimal, HEX 96
 	DEC 41
 	DEC 32
 	DEC 000
+    
+s_Su, HEX A5
+	DEC 83 
+	DEC 117
+    DEC 32
+    DEC 000
+    
+s_cambio, HEX AA
+	DEC 99
+    DEC 97
+    DEC 109
+    DEC 98
+    DEC 105
+    DEC 111
+	DEC 32
+	DEC 000
+    
+s_es, HEX B3
+	DEC 101
+	DEC 115
+	DEC 000
+
+//variable nuevas, mover despues al inicio--------------------------------------
+coins1_c, DEC 0
+coins50_c, DEC 0
+coins25_c, DEC 0
+wanted_product_price, DEC 0
+ONE, DEC 1
+TWO, DEC 2
+THREE, DEC 3
+FOUR, DEC 4
+FIVE,DEC 5
+fifty, dec 50
+twenty_five, dec 25
+
+change, DEC 0
+
 
 ///////////////// functions
+
+//update global money variables
+
+update_money, HEX 0
+        Load money_m
+        Subt money_m
+        Store money_m
+        Load money_u
+        Subt money_u
+        Store money_u
+
+        Load coins1_m
+        Store X
+        Load hundred
+        Store Y
+        JnS Mult
+        Load money_m
+        Add XY
+        Store money_m
+
+        Load coins50_m
+        Store X
+        Load fifty
+        Store Y
+        JnS Mult
+        Load money_m
+        Add XY
+        Store money_m
+
+        Load coins25_m
+        Store X
+        Load twenty_five
+        Store Y
+        JnS Mult
+        Load money_m
+        Add XY
+        Store money_m
+
+        Load coins1_u
+        Store X
+        Load hundred
+        Store Y
+        JnS Mult
+        Load money_u
+        Add XY
+        Store money_u
+
+        Load coins50_u
+        Store X
+        Load fifty
+        Store Y
+        JnS Mult
+        Load money_u
+        Add XY
+        Store money_u
+
+        Load coins25_u
+        Store X
+        Load twenty_five
+        Store Y
+        JnS Mult
+        Load money_u
+        Add XY
+        Store money_u
+	JumpI update_money
+
+//set wanted product price
+set_wp_price, HEX 0
+If1,Load wanted_product
+        Subt	 FIVE 
+        Skipcond 000	
+        Jump	 P_is_5	
+If2, Load wanted_product	
+        Subt	 FOUR
+        Skipcond 000	
+		Jump	 P_is_4
+If3, Load wanted_product	
+        Subt	 THREE
+        Skipcond 000	
+        Jump	 P_is_3
+If4, Load wanted_product	
+        Subt	 TWO
+        Skipcond 000	
+        Jump	 P_is_2
+        Jump     P_is_1
+	
+P_is_5,Load wanted_product_price
+        Add p5_price
+        Store wanted_product_price
+        Jump EndIfwpp
+    
+P_is_4,Load wanted_product_price
+        Add p4_price
+        Store wanted_product_price
+        Jump EndIfwpp
+
+P_is_3,Load wanted_product_price
+        Add p3_price
+        Store wanted_product_price
+        Jump EndIfwpp
+    
+P_is_2,Load wanted_product_price
+        Add p2_price
+        Store wanted_product_price
+        Jump EndIfwpp
+    
+P_is_1,Load wanted_product_price
+        Add p1_price
+        Store wanted_product_price
+        Jump EndIfwpp
+    
+EndIfwpp, JumpI set_wp_price
+    
+
+
+//compute change
+compute_change,HEX 0
+JnS set_wp_price
+    Load money_u
+    Subt  wanted_product_price
+    Store change
+     
+    //calcular cambio de monedas de 100
+    Load change
+    Store N
+    Load hundred
+    Store D
+    JnS division
+    Load Answer
+    Store coins1_c 
+    
+    Load coins1_c
+    Store X
+    Load hundred
+    Store Y
+    JnS Mult
+    Load change
+    Subt  XY
+    Store change
+    
+    //calcular cambio de monedas de 50
+    Load change
+    Store N
+    Load fifty
+    Store D
+    JnS division
+    Load Answer
+    Store coins50_c
+    
+    Load coins50_c
+    Store X
+    Load fifty
+    Store Y
+    JnS Mult
+    Load change
+    Subt  XY
+    Store change
+    
+    //calcular cambio de monedas de 25
+    Load change
+    Store N
+    Load twenty_five
+    Store D
+    JnS division
+    Load Answer
+    Store coins25_c
+    
+    Load coins25_c
+    Store X
+    Load twenty_five
+    Store Y
+    JnS Mult
+    Load change
+    Subt  XY
+    Store change
+    
+    //quitar monedas de la maquina
+    Load coins1_m
+	Subt coins1_c
+	Store coins1_m
+    
+    Load coins50_m
+	Subt coins50_c
+	Store coins50_m
+    
+    Load coins25_m
+	Subt coins25_c
+	Store coins25_m
+    
+	JumpI compute_change
+    
+//prints user's change
+print_change, HEX 0
+    JnS compute_change
+        / section message
+				JnS line_n_break
+                Load s_Su
+				JnS Getch
+                Load s_cambio
+				JnS Getch
+				Load s_es
+				JnS Getch
+                JnS line_n_break
+                / 1 coins
+                Load s100
+                JnS equal
+				Load coins1_c
+                JnS print_digits
+				/ 50 coins
+                Load s50
+                JnS equal
+				Load coins50_c
+				JnS print_digits
+				/ 25 coins
+                Load s25
+                JnS equal
+				Load coins25_c
+				JnS print_digits
+    JumpI print_change
+    
+    
+
+
 // print coins
 print_coins,    HEX 0
 				/ section message
@@ -671,12 +931,17 @@ cents_separator, Load s_dot
                  Jump cents
                  
 ///////////////// Main program
-Main, JnS print_coins
+ 	
+Main, JnS print_coins 
 JnS input_coins
 JnS print_coins
 JnS input_product
-Halt
+JnS update_money
+JnS print_change
+JnS print_coins 
 
+
+Halt
 
 
 
