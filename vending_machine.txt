@@ -18,8 +18,8 @@ money_m, DEC 0
 money_u, DEC 0
 / user coins 
 coins1_u, DEC 1
-coins50_u, DEC 2
-coins25_u, DEC 3
+coins50_u, DEC 1
+coins25_u, DEC 1
 / product prices
 p_prices_start, HEX B /puntero aqui + 0
 p1_price, DEC 250
@@ -537,6 +537,16 @@ print_products_2, Load p_prices_start // updated current price
                   JumpI print_products
                   Jump print_products_2
 
+/------Variables validacion, mover al inicio--------------/
+/temp variables for checking inputs
+temp_1,  DEC 0
+temp_2, DEC 0
+temp_3, DEC 0
+/ boolean var for valid Input(1 if valid, 0 if not)
+boolean_var, DEC 0
+/ max money for user and machine
+money_u_max, DEC 9900
+money_m_max, DEC 30000
 / insert coins
 input_coins,  HEX 0
 		/ instruction message
@@ -551,11 +561,16 @@ input_coins,  HEX 0
 		// 1 input
 		Load s100
         JnS equal
-        Input 
-        // TODO verify max dollars in input <= 99 as the maximum money of the user is $99.99 ($99.75)
-        // and the maximum money in the machine is ~ 65525 (use 65000) = $650.00
-        // machine money = user coins + machine coins
+        Load money_m
+pedir_1_coins,Input         
+        Store temp_1
+        JnS check_negative_1
+        Load temp_1
+        Add coins1_u
         Store coins1_u
+        Clear
+		Store temp_1
+        Load  coins1_u
         JnS print_digits
         Load coins1_u
         Add coins1_m // update machine coins
@@ -563,9 +578,15 @@ input_coins,  HEX 0
         // 50 input
 		Load s50
 		JnS equal
-        Input 
-        // TODO verify and restrict max
-		Store coins50_u
+pedir_050_coins,Input  
+        Store temp_1
+        JnS check_negative_050
+        Load temp_1
+        Add coins50_u
+        Store coins50_u
+        Clear
+		Store temp_1
+        Load coins50_u
         JnS print_digits
         Load coins50_u
         Add coins50_m // update machine coins
@@ -573,9 +594,14 @@ input_coins,  HEX 0
 		// 25 input
 		Load s25
 		JnS equal
-        Input 
-        // TODO verify and restric max
-		Store coins25_u
+pedir_025_coins,Input  
+        Store temp_1
+        JnS check_negative_025
+        Load temp_1
+        Add coins25_u
+        Store coins25_u
+        Clear
+		Load coins25_u
         JnS print_digits
         Load coins25_u
         Add coins25_m // update machine coins
@@ -929,7 +955,163 @@ dollar_sign,  Load s_money
 cents_separator, Load s_dot
 				 Output
                  Jump cents
-                 
+/Check input functions
+/Checking for $1 coin input
+check_negative_1, HEX 0
+	Clear
+	Store temp_2
+    Clear
+	Store temp_3
+	Load temp_1
+    Skipcond 000
+    jump check_money_max_u_1
+    Clear
+	Store temp_1
+    Load boolean_var
+	Jump pedir_1_coins
+check_money_max_u_1, JnS calc_money_1
+		Load temp_3
+		Add money_u
+		Subt money_u_max
+        Store temp_2
+        Load temp_2
+        Skipcond 800
+        Jump  check_money_max_m_1
+        Clear
+		Store temp_2
+        Load boolean_var
+		Jump pedir_1_coins
+        
+check_money_max_m_1,  load temp_3
+		Add money_u
+		Add money_m
+		Subt money_m_max
+        Store temp_2
+        Load temp_2
+		Skipcond 800
+        Jump end_1
+        Clear
+		Store temp_2
+        Clear
+        Store temp_3
+        Load boolean_var
+		Jump pedir_1_coins
+end_1, JumpI check_negative_1
+        
+calc_money_1, HEX 0
+		Load temp_1
+        Store X
+        Load hundred
+        Store Y
+        JnS Mult
+        Load temp_3
+        Add XY
+        Store temp_3
+        JumpI calc_money_1
+/Checking for $0.5 coin input
+check_negative_050, HEX 0
+	Clear
+	Store temp_2
+    Clear
+	Store temp_3
+	Load temp_1
+    Skipcond 000
+    jump check_money_max_u_050
+    Clear
+	Store temp_1
+    Load boolean_var
+	Jump pedir_050_coins
+check_money_max_u_050, JnS calc_money_050
+		Load temp_3
+		Add money_u
+		Subt money_u_max
+        Store temp_2
+        Load temp_2
+        Skipcond 800
+        Jump  check_money_max_m_050
+        Clear
+		Store temp_2
+        Load boolean_var
+		Jump pedir_050_coins
+        
+check_money_max_m_050,  load temp_3
+		Add money_u
+		Add money_m
+		Subt money_m_max
+        Store temp_2
+        Load temp_2
+		Skipcond 800
+        Jump end_050
+        Clear
+		Store temp_2
+        Clear
+        Store temp_3
+        Load boolean_var
+		Jump pedir_050_coins
+end_050, JumpI check_negative_050
+        
+calc_money_050, HEX 0
+		Load temp_1
+        Store X
+        Load fifty
+        Store Y
+        JnS Mult
+        Load temp_3
+        Add XY
+        Store temp_3
+        JumpI calc_money_050
+/Checking for $0.25 coin input
+check_negative_025, HEX 0
+	Clear
+	Store temp_2
+    Clear
+	Store temp_3
+	Load temp_1
+    Skipcond 000
+    jump check_money_max_u_025
+    Clear
+	Store temp_1
+    Load boolean_var
+	Jump pedir_025_coins
+check_money_max_u_025, JnS calc_money_025
+		Load temp_3
+		Add money_u
+		Subt money_u_max
+        Store temp_2
+        Load temp_2
+        Skipcond 800
+        Jump  check_money_max_m_025
+        Clear
+		Store temp_2
+        Load boolean_var
+		Jump pedir_025_coins
+        
+check_money_max_m_025,  load temp_3
+		Add money_u
+		Add money_m
+		Subt money_m_max
+        Store temp_2
+        Load temp_2
+		Skipcond 800
+        Jump end_025
+        Clear
+		Store temp_2
+        Clear
+        Store temp_3
+        Load boolean_var
+		Jump pedir_025_coins
+end_025,JumpI check_negative_025
+        
+calc_money_025, HEX 0
+		Load temp_1
+        Store X
+        Load twenty_five
+        Store Y
+        JnS Mult
+        Load temp_3
+        Add XY
+        Store temp_3
+        JumpI calc_money_025                 
 ///////////////// Main program
  	
 Main, JnS print_coins 
@@ -943,5 +1125,3 @@ JnS print_coins
 
 
 Halt
-
-
