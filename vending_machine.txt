@@ -255,54 +255,54 @@ update_money, HEX 0
         Store money_u
 
         Load coins1_m
-        Store X
-        Load hundred
         Store Y
+        Load hundred
+        Store X
         JnS Mult
         Load money_m
         Add XY
         Store money_m
 
         Load coins50_m
-        Store X
-        Load fifty
         Store Y
+        Load fifty
+        Store X
         JnS Mult
         Load money_m
         Add XY
         Store money_m
 
         Load coins25_m
-        Store X
-        Load twenty_five
         Store Y
+        Load twenty_five
+        Store X
         JnS Mult
         Load money_m
         Add XY
         Store money_m
 
         Load coins1_u
-        Store X
-        Load hundred
         Store Y
+        Load hundred
+        Store X
         JnS Mult
         Load money_u
         Add XY
         Store money_u
 
         Load coins50_u
-        Store X
-        Load fifty
         Store Y
+        Load fifty
+        Store X
         JnS Mult
         Load money_u
         Add XY
         Store money_u
 
         Load coins25_u
-        Store X
-        Load twenty_five
         Store Y
+        Load twenty_five
+        Store X
         JnS Mult
         Load money_u
         Add XY
@@ -375,9 +375,9 @@ JnS set_wp_price
     Store coins1_c 
     
     Load coins1_c
-    Store X
-    Load hundred
     Store Y
+    Load hundred
+    Store X
     JnS Mult
     Load change
     Subt  XY
@@ -393,9 +393,9 @@ JnS set_wp_price
     Store coins50_c
     
     Load coins50_c
-    Store X
-    Load fifty
     Store Y
+    Load fifty
+    Store X
     JnS Mult
     Load change
     Subt  XY
@@ -933,6 +933,7 @@ cents_separator, Load s_dot
 ///////////////// Main program
  	
 Main, JnS print_coins 
+JnS update_money
 JnS input_coins
 JnS print_coins
 JnS input_product
@@ -942,6 +943,5 @@ JnS print_coins
 
 
 Halt
-
 
 
