@@ -17,9 +17,9 @@ money_m, DEC 0
 // TODO update with initial user coins
 money_u, DEC 0
 / user coins 
-coins1_u, DEC 1
-coins50_u, DEC 1
-coins25_u, DEC 1
+coins1_u, DEC 0
+coins50_u, DEC 0
+coins25_u, DEC 0
 / product prices
 p_prices_start, HEX B /puntero aqui + 0
 p1_price, DEC 250
@@ -225,7 +225,29 @@ s_es, HEX B3
 	DEC 101
 	DEC 115
 	DEC 000
+    
+s_No_disponemos, HEX B7
+	DEC 78
+	DEC 111
+    DEC 32
+    DEC 100
+    DEC 105
+    DEC 115
+    DEC 112
+    DEC 111
+    DEC 110
+    DEC 101
+    DEC 109
+    DEC 111
+    DEC 115
+    DEC 32
+	DEC 000
 
+s_el, HEX C7
+	DEC 101
+	DEC 108
+    DEC 32
+	DEC 000
 //variable nuevas, mover despues al inicio--------------------------------------
 coins1_c, DEC 0
 coins50_c, DEC 0
@@ -308,7 +330,49 @@ update_money, HEX 0
         Add XY
         Store money_u
 	JumpI update_money
-
+    
+drop_product,HEX 0 //remove selected product
+If_five,Load wanted_product
+        Subt	 FIVE 
+        Skipcond 000	
+        Jump	 is_5	
+If_four, Load wanted_product	
+        Subt	 FOUR
+        Skipcond 000	
+		Jump	 is_4
+If_three, Load wanted_product	
+        Subt	 THREE
+        Skipcond 000	
+        Jump	 is_3
+If_two, Load wanted_product	
+        Subt	 TWO
+        Skipcond 000	
+        Jump	 is_2
+        Jump     is_1
+        
+is_5, Load p5_q
+        Subt ONE
+        Store p5_q
+        Jump EndIf_remove
+is_4, Load p4_q
+        Subt ONE
+        Store p4_q
+        Jump EndIf_remove
+is_3, Load p3_q
+        Subt ONE
+        Store p3_q
+        Jump EndIf_remove
+is_2, Load p2_q
+        Subt ONE
+        Store p2_q
+        Jump EndIf_remove
+is_1, Load p1_q
+        Subt ONE
+        Store p1_q
+        Jump EndIf_remove
+        
+EndIf_remove,JumpI drop_product
+    
 //set wanted product price
 set_wp_price, HEX 0
 If1,Load wanted_product
@@ -1111,17 +1175,62 @@ calc_money_025, HEX 0
         Load temp_3
         Add XY
         Store temp_3
-        JumpI calc_money_025                 
+        JumpI calc_money_025 
+reset_user, HEX 0  // resets user money
+	Load coins1_u
+	Subt coins1_u
+    Add ONE
+    Store coins1_u
+    Load coins50_u
+	Subt coins50_u
+    Add ONE
+    Store coins50_u
+    Load coins25_u
+	Subt coins25_u
+    Add ONE
+    Store coins25_u
+    JumpI reset_user
+    
+BOOL_1, DEC 1
+BOOL_2, DEC 1
 ///////////////// Main program
- 	
-Main, JnS print_coins 
+Main, JnS reset_user
+JnS print_coins 
 JnS update_money
 JnS input_coins
 JnS print_coins
 JnS input_product
 JnS update_money
-JnS print_change
-JnS print_coins 
+
+//main inst
+if_B1, Load BOOL_1 // producto disponible
+	   Skipcond 800	
+	   Jump	 err1 // b1=0
+if_B2, Load BOOL_2 // hay cambio disponible
+	   Skipcond 800	
+	   Jump	 err2 // b2=0
+//TODO restar producto seleccionado
+JnS drop_product  
+JnS print_change  //return cambio
+
+Jump Main //volver a ejecutar
+
+err1, JnS line_n_break //No disponemos el producto
+      Load s_No_disponemos
+      JnS Getch
+      Load s_el
+      JnS Getch
+      Load s_producto
+      JnS Getch
+	  Jump if_B2
+err2, JnS line_n_break //No disponemos cambio
+	  Load s_No_disponemos
+      JnS Getch
+      Load s_cambio
+      JnS Getch
+Jump Main
+
+
 
 
 Halt
