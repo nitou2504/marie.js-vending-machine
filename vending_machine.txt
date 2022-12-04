@@ -686,10 +686,15 @@ input_product, HEX 0
                 JnS line_n_break
                 JnS print_products
                 // input
-                Input
+pedir_product,Input
+				Store temp_1
+                JnS check_product
+				Load temp_1
                 Store wanted_product
+                Clear
+				Store temp_1
                 JumpI input_product
-
+				
 / print string (chptr: pointer to string start)
 // load chptr value and then jump to getch. It updates chptr and then prints
 Chptr, HEX 0
@@ -808,8 +813,12 @@ J,    DEC    0    /local variable
 
 Mult,    HEX    0    / Store return address here.
    Load     Y
+   Skipcond 400
+   Jump non_cero_Y
+   Jump cero_Y
+non_cero_Y,Load Y
    Store     J    / J = Y
-   Clear
+ 	Clear
    Store    XY    / XY = 0
 Loop,    Load    X    
    Add    XY    / XY = X
@@ -820,6 +829,10 @@ Loop,    Load    X
    Skipcond 400    / if J=0
    Jump    Loop
    JumpI    Mult    / Return to calling code.
+cero_Y,   Clear
+   Store    XY 
+   JumpI Mult
+
 
 / digits(value = xxxx) returns units, tens, hundreds, thousands
 // load and store value before call
@@ -1031,8 +1044,9 @@ check_negative_1, HEX 0
     jump check_money_max_u_1
     Clear
 	Store temp_1
-    Load boolean_var
-	Jump pedir_1_coins
+    JnS reset_user
+    JnS reset_machine
+	Jump Main
 check_money_max_u_1, JnS calc_money_1
 		Load temp_3
 		Add money_u
@@ -1063,9 +1077,9 @@ check_money_max_m_1,  load temp_3
 end_1, JumpI check_negative_1
         
 calc_money_1, HEX 0
-		Load temp_1
+		Load hundred
         Store X
-        Load hundred
+        Load temp_1
         Store Y
         JnS Mult
         Load temp_3
@@ -1083,8 +1097,9 @@ check_negative_050, HEX 0
     jump check_money_max_u_050
     Clear
 	Store temp_1
-    Load boolean_var
-	Jump pedir_050_coins
+    JnS reset_user
+    JnS reset_machine
+	Jump Main
 check_money_max_u_050, JnS calc_money_050
 		Load temp_3
 		Add money_u
@@ -1115,9 +1130,9 @@ check_money_max_m_050,  load temp_3
 end_050, JumpI check_negative_050
         
 calc_money_050, HEX 0
-		Load temp_1
+		Load fifty
         Store X
-        Load fifty
+        Load temp_1
         Store Y
         JnS Mult
         Load temp_3
@@ -1135,8 +1150,9 @@ check_negative_025, HEX 0
     jump check_money_max_u_025
     Clear
 	Store temp_1
-    Load boolean_var
-	Jump pedir_025_coins
+    JnS reset_user
+    JnS reset_machine
+	Jump Main
 check_money_max_u_025, JnS calc_money_025
 		Load temp_3
 		Add money_u
@@ -1167,9 +1183,9 @@ check_money_max_m_025,  load temp_3
 end_025,JumpI check_negative_025
         
 calc_money_025, HEX 0
-		Load temp_1
+		Load twenty_five
         Store X
-        Load twenty_five
+        Load temp_1
         Store Y
         JnS Mult
         Load temp_3
@@ -1177,24 +1193,63 @@ calc_money_025, HEX 0
         Store temp_3
         JumpI calc_money_025 
 reset_user, HEX 0  // resets user money
-	Load coins1_u
-	Subt coins1_u
-    Add ONE
+	Clear
+    //Add ONE
     Store coins1_u
-    Load coins50_u
-	Subt coins50_u
-    Add ONE
+    Clear
+    //Add ONE
     Store coins50_u
-    Load coins25_u
-	Subt coins25_u
-    Add ONE
+    Clear
+    //Add ONE
     Store coins25_u
     JumpI reset_user
-    
+///////////////////////////
+reset_machine, HEX 0  // resets user money
+	Load coins1_m
+	Subt coins1_m
+    Add TWO
+    Store coins1_m
+    Load coins50_m
+	Subt coins50_m
+    Add TWO
+    Store coins50_m
+    Load coins25_m
+	Subt coins25_m
+    Add TWO
+    Store coins25_m
+    JumpI reset_machine
+
+///////////////////////////
+check_product, HEX 0
+	Load temp_1
+    Skipcond 000
+    jump check_0
+    Clear
+	Store temp_1
+	Jump Main
+
+check_0, Load temp_1
+        Skipcond 400
+        Jump  check_max_product
+        Clear
+		Store temp_1
+		Jump pedir_product
+        
+check_max_product,  load temp_1
+		Subt products
+        Store temp_2
+        Load temp_2
+		Skipcond 800
+        Jump end
+        Clear
+		Store temp_2
+		Jump pedir_product
+end,JumpI check_product
 BOOL_1, DEC 1
 BOOL_2, DEC 1
 ///////////////// Main program
 Main, JnS reset_user
+JnS reset_machine
 JnS print_coins 
 JnS update_money
 JnS input_coins
