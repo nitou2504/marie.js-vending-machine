@@ -248,6 +248,80 @@ s_el, HEX C7
 	DEC 108
     DEC 32
 	DEC 000
+    
+//Deseas comprar mas productos
+s_pregunta, HEX CC
+    DEC 68 //Deseas
+    DEC 101
+    DEC 115
+    DEC 101
+    DEC 97
+    DEC 115
+    DEC 32
+    DEC 99  //comprar
+    DEC 111
+    DEC 109
+    DEC 112
+    DEC 114
+    DEC 97
+    DEC 114
+    DEC 32
+    DEC 109//mas
+    DEC 97
+    DEC 115
+    DEC 32
+	DEC 112 //productos
+	DEC 114
+	DEC 111
+	DEC 100
+	DEC 117
+	DEC 99
+	DEC 116
+	DEC 111
+    DEC 115
+    DEC 63
+	DEC 32
+    DEC 10
+    DEC 83 //S/N?
+    DEC 47
+    DEC 78
+	DEC 000
+    
+s_falta_dinero,HEX F0 //no ingresaste suficiente dinero, vuelve a intentar
+	DEC 78//No
+    DEC 111
+    DEC 32
+    DEC 105//ingresaste
+    DEC 110
+    DEC 103
+    DEC 114
+    DEC 101
+    DEC 115
+    DEC 97
+    DEC 115
+    DEC 116
+    DEC 101
+    DEC 32
+    DEC 115//suficiente
+    DEC 117
+    DEC 102
+    DEC 105
+    DEC 99
+    DEC 105
+    DEC 101
+    DEC 110
+    DEC 116
+    DEC 101
+    DEC 32
+    DEC 100//dinero
+    DEC 105
+    DEC 110
+    DEC 101
+    DEC 114
+    DEC 111
+    DEC 32
+    DEC 000
+
 //variable nuevas, mover despues al inicio--------------------------------------
 coins1_c, DEC 0
 coins50_c, DEC 0
@@ -527,7 +601,34 @@ print_change, HEX 0
 				JnS print_digits
     JumpI print_change
     
-    
+//returns user's money
+return_money, HEX 0
+    JnS compute_change
+        / section message
+				JnS line_n_break
+                Load s_Su
+				JnS Getch
+                Load s_cambio
+				JnS Getch
+				Load s_es
+				JnS Getch
+                JnS line_n_break
+                / 1 coins
+                Load s100
+                JnS equal
+				Load coins1_u
+                JnS print_digits
+				/ 50 coins
+                Load s50
+                JnS equal
+				Load coins50_u
+				JnS print_digits
+				/ 25 coins
+                Load s25
+                JnS equal
+				Load coins25_u
+				JnS print_digits
+    JumpI return_money
 
 
 // print coins
@@ -1245,8 +1346,14 @@ check_max_product,  load temp_1
 		Store temp_2
 		Jump pedir_product
 end,JumpI check_product
-BOOL_1, DEC 1
-BOOL_2, DEC 1
+
+BOOL_1, DEC 1 //hay producto
+BOOL_2, DEC 1  //hay cambio
+BOOL_3, DEC 1 //al usuario le alcanza el dinero
+respuesta, DEC 0
+r_si, DEC 83
+r_no, DEC 78
+
 ///////////////// Main program
 Main, JnS reset_user
 JnS reset_machine
@@ -1257,17 +1364,29 @@ JnS print_coins
 JnS input_product
 JnS update_money
 
-//main inst
+//imprimir mensajes de erros, TODO validacion
 if_B1, Load BOOL_1 // producto disponible
 	   Skipcond 800	
 	   Jump	 err1 // b1=0
 if_B2, Load BOOL_2 // hay cambio disponible
 	   Skipcond 800	
 	   Jump	 err2 // b2=0
-//TODO restar producto seleccionado
-JnS drop_product  
+if_B3, Load BOOL_3 // te alcanza el dinero
+	   Skipcond 800	
+	   Jump	 err3 // b3=0  
+       
+JnS drop_product  //restar producto seleccionado
 JnS print_change  //return cambio
 
+pregunta,JnS line_n_break //pregunta al usuario si desea continuar con el programa
+Load s_pregunta
+JnS Getch
+Input
+Store respuesta
+if_r1, Load respuesta 
+	   Subt r_si
+	   Skipcond 400	
+	   Jump	 Stop // r=N, se para el programa
 Jump Main //volver a ejecutar
 
 err1, JnS line_n_break //No disponemos el producto
@@ -1277,15 +1396,19 @@ err1, JnS line_n_break //No disponemos el producto
       JnS Getch
       Load s_producto
       JnS Getch
-	  Jump if_B2
+      JnS return_money  
+	  Jump pregunta
 err2, JnS line_n_break //No disponemos cambio
 	  Load s_No_disponemos
       JnS Getch
       Load s_cambio
       JnS Getch
-Jump Main
+      JnS return_money  
+      Jump pregunta
+err3, JnS line_n_break //No ingresaste suficiente dinero
+      Load s_falta_dinero
+      JnS Getch
+      JnS return_money  
+	  Jump pregunta
 
-
-
-
-Halt
+Stop, Halt
