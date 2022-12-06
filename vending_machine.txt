@@ -517,28 +517,23 @@ If4, Load wanted_product
         Jump	 P_is_2
         Jump     P_is_1
 	
-P_is_5,Load wanted_product_price
-        Add p5_price
+P_is_5,Load p5_price
         Store wanted_product_price
         Jump EndIfwpp
     
-P_is_4,Load wanted_product_price
-        Add p4_price
+P_is_4,Load p4_price
         Store wanted_product_price
         Jump EndIfwpp
 
-P_is_3,Load wanted_product_price
-        Add p3_price
+P_is_3,Load  p3_price
         Store wanted_product_price
         Jump EndIfwpp
     
-P_is_2,Load wanted_product_price
-        Add p2_price
+P_is_2,Load p2_price
         Store wanted_product_price
         Jump EndIfwpp
     
-P_is_1,Load wanted_product_price
-        Add p1_price
+P_is_1,Load p1_price
         Store wanted_product_price
         Jump EndIfwpp
     
@@ -1437,16 +1432,7 @@ JnS print_coins
 JnS input_product
 JnS update_money
 
-//imprimir mensajes de erros, TODO validacion
-if_B1, Load BOOL_1 // producto disponible
-	   Skipcond 800	
-	   Jump	 err1 // b1=0
-if_B2, Load BOOL_2 // hay cambio disponible
-	   Skipcond 800	
-	   Jump	 err2 // b2=0
-if_B3, Load BOOL_3 // te alcanza el dinero
-	   Skipcond 800	
-	   Jump	 err3 // b3=0  
+
        
 JnS drop_product  //restar producto seleccionado
 Load BOOL_1
@@ -1468,7 +1454,16 @@ if_r1, Load respuesta
 	   Skipcond 400	
 	   Jump	 Stop // r=N, se para el programa
 Jump Main //volver a ejecutar
-
+//imprimir mensajes de erros, TODO validacion
+if_B1, Load BOOL_1 // producto disponible
+	   Skipcond 800	
+	   Jump	 err1 // b1=0
+if_B2, Load BOOL_2 // hay cambio disponible
+	   Skipcond 800	
+	   Jump	 err2 // b2=0
+if_B3, Load BOOL_3 // te alcanza el dinero
+	   Skipcond 800	
+	   Jump	 err3 // b3=0  
 err1, JnS line_n_break //No disponemos el producto
       Load s_No_disponemos
       JnS Getch
