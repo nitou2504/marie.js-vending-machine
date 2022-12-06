@@ -9,7 +9,7 @@ i, HEX 0
 / machine coins
 coins1_m, DEC 2
 coins50_m, DEC 2
-coins25_m, DEC 2
+coins25_m, DEC 0
 / machine money 
 // TODO update with initial machine coins (
 money_m, DEC 0
@@ -582,23 +582,24 @@ JnS set_wp_price
     Store temp_1
     Load temp_1
 	Skipcond 000
-    jump suficiente_money
+    jump suficiente_money_u
     Clear
     Store BOOL_3
     Clear
 	Store temp_1
 	Jump final_change
-suficiente_money,Load BOOL_3
+suficiente_money_u,Load BOOL_3
     ADD ONE
 	Store BOOL_3
 	Load temp_1
 	Store change
+    
 //Calcular si hay suficiente dinero para cambiar
 	Load money_m 
 	Subt change
 	Store temp_2
 	Skipcond 000
-    jump hay_dinero
+    jump suficiente_dinero_m
     Clear
     Store BOOL_2
     Clear
@@ -606,7 +607,9 @@ suficiente_money,Load BOOL_3
 	Jump final_change
      
     //calcular cambio de monedas de 100
-hay_dinero,Load BOOL_2
+suficiente_dinero_m,Clear
+	Store temp_2
+	Load BOOL_2
     ADD ONE
 	Store BOOL_2
     
@@ -616,7 +619,25 @@ hay_dinero,Load BOOL_2
     Store D
     JnS division
     Load Answer
-    Store coins1_c 
+//checking si hay monedas de 1 dolar    
+    store temp_1
+	Load coins1_m
+	Subt temp_1
+	Skipcond 000
+    Jump si_cambio_1
+	Clear
+    Store BOOL_2
+    Clear
+	Store temp_1
+    Jump final_change
+    
+si_cambio_1,Load BOOL_2
+    ADD ONE
+	Store BOOL_2
+	Load temp_1
+	Store coins1_c 
+    Clear
+	Store temp_1
     
     Load coins1_c
     Store Y
@@ -634,7 +655,25 @@ hay_dinero,Load BOOL_2
     Store D
     JnS division
     Load Answer
-    Store coins50_c
+    //checking si hay monedas de 0.50     
+    store temp_1
+	Load coins50_m
+	Subt temp_1
+	Skipcond 000
+    Jump si_cambio_50
+	Clear
+    Store BOOL_2
+    Clear
+	Store temp_1
+    Jump final_change
+    
+si_cambio_50,Load BOOL_2
+    ADD ONE
+	Store BOOL_2
+	Load temp_1
+	Store coins50_c 
+    Clear
+	Store temp_1
     
     Load coins50_c
     Store Y
@@ -652,8 +691,26 @@ hay_dinero,Load BOOL_2
     Store D
     JnS division
     Load Answer
-    Store coins25_c
+    //checking si hay monedas de 0.50     
+    store temp_1
+	Load coins25_m
+	Subt temp_1
+	Skipcond 000
+    Jump si_cambio_25
+	Clear
+    Store BOOL_2
+    Clear
+	Store temp_1
+    Jump final_change
     
+si_cambio_25,Load BOOL_2
+    ADD ONE
+	Store BOOL_2
+	Load temp_1
+	Store coins25_c 
+    Clear
+	Store temp_1
+
     Load coins25_c
     Store X
     Load twenty_five
