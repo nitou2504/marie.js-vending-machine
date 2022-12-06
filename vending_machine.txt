@@ -551,7 +551,20 @@ compute_change,HEX 0
 JnS set_wp_price
     Load money_u
     Subt  wanted_product_price
-    Store change
+    Store temp_1
+    Load temp_1
+	Skipcond 000
+    jump suficiente_money
+    Clear
+    Store BOOL_3
+    Clear
+	Store temp_1
+	Jump final_change
+suficiente_money,Load BOOL_3
+    ADD ONE
+	Store BOOL_3
+	Load temp_1
+	Store change
      
     //calcular cambio de monedas de 100
     Load change
@@ -619,12 +632,12 @@ JnS set_wp_price
     Load coins25_m
 	Subt coins25_c
 	Store coins25_m
+    Jump final_change
     
-	JumpI compute_change
+final_change,JumpI compute_change
     
 //prints user's change
 print_change, HEX 0
-    JnS compute_change
         / section message
 				JnS line_n_break
                 Load s_Su
@@ -1207,7 +1220,7 @@ check_negative_1, HEX 0
     Clear
 	Store temp_1
     JnS reset_user
-    JnS reset_machine
+    
 	Jump Main
 check_money_max_u_1, JnS calc_money_1
 		Load temp_3
@@ -1260,7 +1273,7 @@ check_negative_050, HEX 0
     Clear
 	Store temp_1
     JnS reset_user
-    JnS reset_machine
+    
 	Jump Main
 check_money_max_u_050, JnS calc_money_050
 		Load temp_3
@@ -1313,7 +1326,6 @@ check_negative_025, HEX 0
     Clear
 	Store temp_1
     JnS reset_user
-    JnS reset_machine
 	Jump Main
 check_money_max_u_025, JnS calc_money_025
 		Load temp_3
@@ -1440,6 +1452,10 @@ JnS drop_product  //restar producto seleccionado
 Load BOOL_1
 Skipcond 800
 Jump if_B1
+JnS compute_change
+Load BOOL_3
+Skipcond 800
+Jump  if_B3
 JnS print_change  //return cambio
 
 pregunta,JnS line_n_break //pregunta al usuario si desea continuar con el programa
