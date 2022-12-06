@@ -425,22 +425,72 @@ If_two, Load wanted_product
         Jump     is_1
         
 is_5, Load p5_q
+		Skipcond 400
+        Jump it_has_5
+        Load BOOL_1
+        Clear
+		Store BOOL_1
+        Jump EndIf_remove
+it_has_5,Load BOOL_1
+        ADD ONE
+		Store BOOL_1
+		Load p5_q        
         Subt ONE
         Store p5_q
         Jump EndIf_remove
 is_4, Load p4_q
+		Skipcond 400
+        Jump it_has_4
+        Load BOOL_1
+        CLEAR
+		Store BOOL_1
+        Jump EndIf_remove
+it_has_4,Load BOOL_1
+        ADD ONE
+		Store BOOL_1
+		Load p4_q        
         Subt ONE
         Store p4_q
         Jump EndIf_remove
 is_3, Load p3_q
+		Skipcond 400
+        Jump it_has_3
+        Load BOOL_1
+        Clear
+		Store BOOL_1
+        Jump EndIf_remove
+it_has_3,Load BOOL_1
+        ADD ONE
+		Store BOOL_1
+		Load p3_q        
         Subt ONE
         Store p3_q
         Jump EndIf_remove
 is_2, Load p2_q
+		Skipcond 400
+        Jump it_has_2
+        Load BOOL_1
+        Clear
+		Store BOOL_1
+        Jump EndIf_remove
+it_has_2,Load BOOL_1
+        ADD ONE
+		Store BOOL_1
+		Load p2_q        
         Subt ONE
         Store p2_q
         Jump EndIf_remove
 is_1, Load p1_q
+		Skipcond 400
+        Jump it_has_1
+        Load BOOL_1
+        Clear
+		Store BOOL_1
+        Jump EndIf_remove
+it_has_1,Load BOOL_1
+        ADD ONE
+		Store BOOL_1
+		Load p1_q        
         Subt ONE
         Store p1_q
         Jump EndIf_remove
@@ -603,7 +653,7 @@ print_change, HEX 0
     
 //returns user's money
 return_money, HEX 0
-    JnS compute_change
+    
         / section message
 				JnS line_n_break
                 Load s_Su
@@ -618,16 +668,27 @@ return_money, HEX 0
                 JnS equal
 				Load coins1_u
                 JnS print_digits
+                Load coins1_m
+				Subt coins1_u
+				Store coins1_m	
 				/ 50 coins
                 Load s50
                 JnS equal
 				Load coins50_u
 				JnS print_digits
+                Load coins50_m
+				Subt coins50_u
+				Store coins50_m	
 				/ 25 coins
                 Load s25
                 JnS equal
 				Load coins25_u
 				JnS print_digits
+                Load coins25_m
+				Subt coins25_u
+				Store coins25_m	
+                
+                
     JumpI return_money
 
 
@@ -1356,7 +1417,7 @@ r_no, DEC 78
 
 ///////////////// Main program
 Main, JnS reset_user
-JnS reset_machine
+//JnS reset_machine
 JnS print_coins 
 JnS update_money
 JnS input_coins
@@ -1376,6 +1437,9 @@ if_B3, Load BOOL_3 // te alcanza el dinero
 	   Jump	 err3 // b3=0  
        
 JnS drop_product  //restar producto seleccionado
+Load BOOL_1
+Skipcond 800
+Jump if_B1
 JnS print_change  //return cambio
 
 pregunta,JnS line_n_break //pregunta al usuario si desea continuar con el programa
