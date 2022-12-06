@@ -9,7 +9,7 @@ i, HEX 0
 / machine coins
 coins1_m, DEC 2
 coins50_m, DEC 2
-coins25_m, DEC 0
+coins25_m, DEC 2
 / machine money 
 // TODO update with initial machine coins (
 money_m, DEC 0
