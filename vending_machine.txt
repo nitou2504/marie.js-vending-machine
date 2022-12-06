@@ -593,9 +593,24 @@ suficiente_money,Load BOOL_3
 	Store BOOL_3
 	Load temp_1
 	Store change
+//Calcular si hay suficiente dinero para cambiar
+	Load money_m 
+	Subt change
+	Store temp_2
+	Skipcond 000
+    jump hay_dinero
+    Clear
+    Store BOOL_2
+    Clear
+	Store temp_2
+	Jump final_change
      
     //calcular cambio de monedas de 100
-    Load change
+hay_dinero,Load BOOL_2
+    ADD ONE
+	Store BOOL_2
+    
+	Load change
     Store N
     Load hundred
     Store D
@@ -833,7 +848,6 @@ pedir_1_coins,Input
         Store temp_1
         Load temp_1
         Store entrada
-		JnS check_negative
         JnS check_negative_1
         Load temp_1
         Add coins1_u
@@ -852,7 +866,6 @@ pedir_050_coins,Input
         Store temp_1
         Load temp_1
         Store entrada
-		JnS check_negative
         JnS check_negative_050
         Load temp_1
         Add coins50_u
@@ -871,7 +884,6 @@ pedir_025_coins,Input
         Store temp_1
         Load temp_1
         Store entrada
-		JnS check_negative
         JnS check_negative_025
         Load temp_1
         Add coins25_u
@@ -902,7 +914,6 @@ pedir_product,Input
 				Store temp_1
                 Load temp_1
         		Store entrada
-				JnS check_negative
                 JnS check_product
 				Load temp_1
                 Store wanted_product
@@ -1260,8 +1271,8 @@ check_negative_1, HEX 0
     Clear
 	Store temp_1
     JnS reset_user
-    
-	Jump Main
+	Jump err4
+
 check_money_max_u_1, JnS calc_money_1
 		Load temp_3
 		Add money_u
@@ -1314,7 +1325,8 @@ check_negative_050, HEX 0
 	Store temp_1
     JnS reset_user
     
-	Jump Main
+	Jump err4
+
 check_money_max_u_050, JnS calc_money_050
 		Load temp_3
 		Add money_u
@@ -1366,7 +1378,7 @@ check_negative_025, HEX 0
     Clear
 	Store temp_1
     JnS reset_user
-	Jump Main
+	Jump err4
 check_money_max_u_025, JnS calc_money_025
 		Load temp_3
 		Add money_u
@@ -1440,7 +1452,7 @@ check_product, HEX 0
     jump check_0
     Clear
 	Store temp_1
-	Jump Main
+	Jump err4
 
 check_0, Load temp_1
         Skipcond 400
@@ -1487,6 +1499,9 @@ JnS compute_change
 Load BOOL_3
 Skipcond 800
 Jump  if_B3
+Load BOOL_2
+Skipcond 800
+Jump if_B2
 JnS print_change  //return cambio
 
 pregunta,JnS line_n_break //pregunta al usuario si desea continuar con el programa
