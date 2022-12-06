@@ -321,6 +321,32 @@ s_falta_dinero,HEX F0 //no ingresaste suficiente dinero, vuelve a intentar
     DEC 111
     DEC 32
     DEC 000
+    
+       
+s_transaccion_cancelada,HEX 112
+	DEC 84//Transaccion
+	DEC 114
+    DEC 97
+    DEC 110
+    DEC 115
+    DEC 97
+    DEC 99
+    DEC 99
+    DEC 105
+    DEC 111
+    DEC 110
+    DEC 32
+    DEC 99//cancelada
+    DEC 97
+    DEC 110
+    DEC 99
+    DEC 101
+    DEC 108
+    DEC 97
+    DEC 100
+    DEC 97
+	DEC 000
+
 
 //variable nuevas, mover despues al inicio--------------------------------------
 coins1_c, DEC 0
@@ -339,7 +365,14 @@ change, DEC 0
 
 
 ///////////////// functions
-
+entrada,DEC 1
+//revisar si la entrada es negativa
+check_negative,HEX 0
+	Load entrada
+    Skipcond 800
+    Jump err4
+	JumpI check_negative
+    
 //update global money variables
 
 update_money, HEX 0
@@ -798,6 +831,9 @@ input_coins,  HEX 0
         Load money_m
 pedir_1_coins,Input         
         Store temp_1
+        Load temp_1
+        Store entrada
+		JnS check_negative
         JnS check_negative_1
         Load temp_1
         Add coins1_u
@@ -814,6 +850,9 @@ pedir_1_coins,Input
 		JnS equal
 pedir_050_coins,Input  
         Store temp_1
+        Load temp_1
+        Store entrada
+		JnS check_negative
         JnS check_negative_050
         Load temp_1
         Add coins50_u
@@ -830,6 +869,9 @@ pedir_050_coins,Input
 		JnS equal
 pedir_025_coins,Input  
         Store temp_1
+        Load temp_1
+        Store entrada
+		JnS check_negative
         JnS check_negative_025
         Load temp_1
         Add coins25_u
@@ -858,6 +900,9 @@ input_product, HEX 0
                 // input
 pedir_product,Input
 				Store temp_1
+                Load temp_1
+        		Store entrada
+				JnS check_negative
                 JnS check_product
 				Load temp_1
                 Store wanted_product
@@ -1482,6 +1527,11 @@ err2, JnS line_n_break //No disponemos cambio
       Jump pregunta
 err3, JnS line_n_break //No ingresaste suficiente dinero
       Load s_falta_dinero
+      JnS Getch
+      JnS return_money  
+	  Jump pregunta
+err4, JnS line_n_break //Transaccion cancelada
+      Load s_transaccion_cancelada
       JnS Getch
       JnS return_money  
 	  Jump pregunta
