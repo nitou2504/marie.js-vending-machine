@@ -1,4 +1,4 @@
-Jump Main
+﻿Jump Main
 
 //Load coins1_m
 ///////////////// variables & pointers
@@ -7,9 +7,9 @@ offset, DEC 48
 / general counter
 i, HEX 0
 / machine coins
-coins1_m, DEC 2
-coins50_m, DEC 2
-coins25_m, DEC 2
+coins1_m, DEC 0
+coins50_m, DEC 1
+coins25_m, DEC 1
 / machine money 
 // TODO update with initial machine coins (
 money_m, DEC 0
@@ -580,6 +580,7 @@ JnS set_wp_price
     Load money_u
     Subt  wanted_product_price
     Store temp_1
+    store readable_change
     Load temp_1
 	Skipcond 000
     jump suficiente_money_u
@@ -737,6 +738,9 @@ si_cambio_25,Load BOOL_2
 final_change,JumpI compute_change
     
 //prints user's change
+
+readable_change, DEC 0
+
 print_change, HEX 0
         / section message
 				JnS line_n_break
@@ -762,6 +766,15 @@ print_change, HEX 0
                 JnS equal
 				Load coins25_c
 				JnS print_digits
+                JnS break
+                / readable change
+                Load one
+                Store money_format
+                Load readable_change
+                JnS print_digits
+                JnS break
+                Clear
+                Store readable_change
     JumpI print_change
     
 //returns user's money
@@ -952,6 +965,12 @@ pedir_025_coins,Input
         Add coins25_m // update machine coins
 		Store coins25_m
         JnS break
+        JnS update_money
+        Load ONE
+        store money_format
+        Load money_u
+        JnS print_digits
+        jns	break
         JumpI input_coins // return
 
 / insert desired product
@@ -1539,10 +1558,10 @@ r_no, DEC 78
 ///////////////// Main program
 Main, JnS reset_user
 //JnS reset_machine
-JnS print_coins 
-JnS update_money
+/ JnS print_coins / debug
+JnS update_money 
 JnS input_coins
-JnS print_coins
+/ JnS print_coins / debug
 JnS input_product
 JnS update_money
 
