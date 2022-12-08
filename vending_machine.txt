@@ -9,7 +9,7 @@ i, HEX 0
 / machine coins
 coins1_m, DEC 10
 coins50_m, DEC 10
-coins25_m, DEC 2
+coins25_m, DEC 0
 / machine money 
 // TODO update with initial machine coins (
 money_m, DEC 0
@@ -1387,8 +1387,9 @@ check_money_max_u_1, JnS calc_money_1
         Load boolean_var
 		Jump pedir_1_coins
         
-check_money_max_m_1,  load temp_3
-		JnS update_money /#
+check_money_max_m_1,JnS update_money /#  
+		
+        load temp_3
 		Add money_u
 		Add money_m
 		Subt money_m_max
@@ -1443,9 +1444,9 @@ check_money_max_u_050, JnS calc_money_050
         Load boolean_var
 		Jump pedir_050_coins
         
-check_money_max_m_050,  load temp_3
-		JnS update_money /#
-		Add money_u
+check_money_max_m_050,JnS update_money /#
+		load temp_3
+        Add money_u
 		Add money_m
 		Subt money_m_max
         Store temp_2
@@ -1497,9 +1498,9 @@ check_money_max_u_025, JnS calc_money_025
         Load boolean_var
 		Jump pedir_025_coins
         
-check_money_max_m_025,  load temp_3
-		JnS update_money /#
-		Add money_u
+check_money_max_m_025,JnS update_money /#  
+		load temp_3
+        Add money_u
 		Add money_m
 		Subt money_m_max
         Store temp_2
@@ -1588,19 +1589,12 @@ r_no, DEC 78
 ///////////////// Main program
 Main, JnS reset_user
 //JnS reset_machine
-/ JnS print_coins / debug
+JnS print_coins / debug
 JnS update_money 
 JnS input_coins
-/ JnS print_coins / debug
+JnS print_coins / debug
 JnS input_product
-JnS update_money
-
-
-       
-JnS drop_product  //restar producto seleccionado
-Load BOOL_1
-Skipcond 800
-Jump if_B1
+JnS update_money      
 JnS compute_change
 Load BOOL_3
 Skipcond 800
@@ -1608,6 +1602,10 @@ Jump  if_B3
 Load BOOL_2
 Skipcond 800
 Jump if_B2
+JnS drop_product  //restar producto seleccionado
+Load BOOL_1
+Skipcond 800
+Jump if_B1
 JnS print_change  //return cambio
 
 / JnS line_n_break / debug
