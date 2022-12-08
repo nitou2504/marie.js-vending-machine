@@ -1,4 +1,4 @@
-Jump Main
+﻿Jump Main
 
 //Load coins1_m
 ///////////////// variables & pointers
@@ -873,7 +873,7 @@ s_numeral, DEC 35
 s_money, DEC 36
 
 print_products, HEX 0
-				Load products
+				Load one
 				Store i
 print_products_2, Load p_prices_start // updated current price
 				  Add i
@@ -902,8 +902,11 @@ print_products_2, Load p_prices_start // updated current price
                   
                   / i--
                   Load i
-                  Subt one
+                  Add one
                   Store i
+                  Load products
+                  Add one
+                  Subt i
                   Skipcond 800
                   JumpI print_products
                   Jump print_products_2
