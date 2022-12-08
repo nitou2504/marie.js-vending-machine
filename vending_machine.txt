@@ -283,11 +283,17 @@ s_pregunta, HEX CC
 	DEC 32
     DEC 10
     DEC 83 //S/N?
+    DEC 91
+    DEC 49
+    DEC 93
     DEC 47
     DEC 78
+    DEC 91
+    DEC 48
+    DEC 93
 	DEC 000
     
-s_falta_dinero,HEX F0 //no ingresaste suficiente dinero, vuelve a intentar
+s_falta_dinero,HEX F6 //no ingresaste suficiente dinero, vuelve a intentar
 	DEC 78//No
     DEC 111
     DEC 32
@@ -323,7 +329,7 @@ s_falta_dinero,HEX F0 //no ingresaste suficiente dinero, vuelve a intentar
     DEC 000
     
        
-s_transaccion_cancelada,HEX 112
+s_transaccion_cancelada,HEX 118
 	DEC 84//Transaccion
 	DEC 114
     DEC 97
@@ -1617,7 +1623,7 @@ JnS Getch
 Input
 Store respuesta
 if_r1, Load respuesta 
-	   Subt r_si
+	   Subt ONE
 	   Skipcond 400	
 	   Jump	 Stop // r=N, se para el programa
 Jump Main //volver a ejecutar
