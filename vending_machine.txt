@@ -7,9 +7,9 @@ offset, DEC 48
 / general counter
 i, HEX 0
 / machine coins
-coins1_m, DEC 0
-coins50_m, DEC 1
-coins25_m, DEC 1
+coins1_m, DEC 10
+coins50_m, DEC 10
+coins25_m, DEC 2
 / machine money 
 // TODO update with initial machine coins (
 money_m, DEC 0
@@ -375,13 +375,18 @@ check_negative,HEX 0
     
 //update global money variables
 
-update_money, HEX 0
-        Load money_m
-        Subt money_m
+update_money, HEX 0 /# 
+/        Load money_m
+ /       Subt money_m
+  /      Store money_m
+   /     Load money_u
+    /    Subt money_u
+     /   Store money_u
+        
+        Clear
         Store money_m
-        Load money_u
-        Subt money_u
         Store money_u
+
 
         Load coins1_m
         Store Y
@@ -813,6 +818,14 @@ return_money, HEX 0
                 Load coins25_m
 				Subt coins25_u
 				Store coins25_m	
+                JnS break
+                Load ONE
+                Store money_format
+                Load money_u
+                JnS print_digits
+                JnS break
+                Clear
+                Store readable_change
                 
                 
     JumpI return_money
@@ -995,6 +1008,14 @@ pedir_product,Input
                 Store wanted_product
                 Clear
 				Store temp_1
+                JnS break
+                / print selected product
+                Load s_producto
+                JnS Getch
+                Load wanted_product
+                Add offset
+                Output
+                JnS break
                 JumpI input_product
 				
 / print string (chptr: pointer to string start)
@@ -1350,6 +1371,7 @@ check_negative_1, HEX 0
 	Jump err4
 
 check_money_max_u_1, JnS calc_money_1
+		JnS update_money /#
 		Load temp_3
 		Add money_u
 		Subt money_u_max
@@ -1363,6 +1385,7 @@ check_money_max_u_1, JnS calc_money_1
 		Jump pedir_1_coins
         
 check_money_max_m_1,  load temp_3
+		JnS update_money /#
 		Add money_u
 		Add money_m
 		Subt money_m_max
@@ -1404,6 +1427,7 @@ check_negative_050, HEX 0
 	Jump err4
 
 check_money_max_u_050, JnS calc_money_050
+		JnS update_money /#
 		Load temp_3
 		Add money_u
 		Subt money_u_max
@@ -1417,6 +1441,7 @@ check_money_max_u_050, JnS calc_money_050
 		Jump pedir_050_coins
         
 check_money_max_m_050,  load temp_3
+		JnS update_money /#
 		Add money_u
 		Add money_m
 		Subt money_m_max
@@ -1456,6 +1481,7 @@ check_negative_025, HEX 0
     JnS reset_user
 	Jump err4
 check_money_max_u_025, JnS calc_money_025
+		JnS update_money /#
 		Load temp_3
 		Add money_u
 		Subt money_u_max
@@ -1469,6 +1495,7 @@ check_money_max_u_025, JnS calc_money_025
 		Jump pedir_025_coins
         
 check_money_max_m_025,  load temp_3
+		JnS update_money /#
 		Add money_u
 		Add money_m
 		Subt money_m_max
@@ -1579,6 +1606,9 @@ Load BOOL_2
 Skipcond 800
 Jump if_B2
 JnS print_change  //return cambio
+
+/ JnS line_n_break / debug
+/ JnS print_products / debug
 
 pregunta,JnS line_n_break //pregunta al usuario si desea continuar con el programa
 Load s_pregunta
